@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PolicyPulse Dashboard</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        textarea { width: 100%; height: 150px; }
+        .report { border: 1px solid #ccc; padding: 1em; margin-top: 1em; background-color: #f9f9f9; }
+        .violation { background-color: #ffdddd; }
+        .container { max-width: 800px; margin: auto; }
+        .scan-section { margin-bottom: 2em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PolicyPulse Compliance Checker</h1>
+        
+        <div class="scan-section">
+            <h2>Scan New Document</h2>
+            <textarea id="textInput" placeholder="Paste your document text here..."></textarea>
+            <button onclick="startScan('text')">Scan Text</button>
+        </div>
+
+        <div class="scan-section">
+            <h2>Scan Mock Email Inbox</h2>
+            <select id="inboxSelector">
+                <option value="inbox_hr">HR Inbox</option>
+                <option value="inbox_finance">Finance Inbox</option>
+            </select>
+            <button onclick="startScan('inbox')">Scan Inbox</button>
+        </div>
+        
+        <hr>
+        
+        <h2>Scan Report</h2>
+        <div id="reportResult" class="report">
+            <p>Your scan report will appear here.</p>
+        </div>
+    </div>
+
+    <script>
+        async function startScan(scanType) {
+            const reportDiv = document.getElementById('reportResult');
+            reportDiv.innerHTML = '<p>Scanning...</p>';
+            
+            let payload = {};
+            if (scanType === 'text') {
+                payload.text = document.getElementById('textInput').value;
+            } else if (scanType === 'inbox') {
+                payload.inbox = document.getElementById('inboxSelector').value;
+            }
+
+            const response = await fetch('/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            
+            if (data.scanId) {
+                const reportResponse = await fetch(`/reports/${data.scanId}`);
+                const reportData = await reportResponse.json();
+                displayReport(reportData);
+            } else {
+                reportDiv.innerHTML = `<p>Error: ${data.error || 'Unknown error'}</p>`;
+            }
+        }
+
+        function displayReport(report) {
+            const reportDiv = document.getElementById('reportResult');
+            if (report.violations.length === 0) {
+                reportDiv.innerHTML = '<h3>No Violations Found!</h3>';
+                return;
+            }
+            
+            let html = '<h3>Flagged Sentences:</h3><ul>';
+            report.violations.forEach(v => {
+                // Sanitize the sentence to prevent HTML injection
+                const sanitizedSentence = v.sentence.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                html += `<li><strong>${v.rule_name}:</strong> <span class="violation">${sanitizedSentence}</span></li>`;
+            });
+            html += '</ul>';
+            reportDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

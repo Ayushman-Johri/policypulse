@@ -1,0 +1,21 @@
+{
+  "inbox_hr": [
+    {
+      "id": "email_001",
+      "subject": "Project Update",
+      "body": "Hi Team,\nJust a reminder that all details about Project Mercury are confidential. Please do not share this information outside the team.\nThanks."
+    },
+    {
+      "id": "email_002",
+      "subject": "Contact Info Request",
+      "body": "Can someone please send me the manager's contact details? I believe his email is manager.test@example.com. We need it for the new hire packet."
+    }
+  ],
+  "inbox_finance": [
+    {
+        "id": "email_003",
+        "subject": "Q3 Financials",
+        "body": "The Q3 financial report is ready for review. This document is for Internal Use Only."
+    }
+  ]
+}

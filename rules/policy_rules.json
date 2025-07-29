@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "id": "FORBIDDEN_TERM",
+      "name": "Forbidden Terminology",
+      "patterns": [
+        {"label": "Confidential", "pattern": "Project Mercury"},
+        {"label": "Internal", "pattern": "Internal Use Only"}
+      ]
+    },
+    {
+      "id": "PII_EMAIL",
+      "name": "PII - Email Address",
+      "pattern_regex": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
+    }
+  ]
+}
